@@ -1,0 +1,9 @@
+config {
+    type: "table",
+    schema: "staging",
+    name: "stg_products"
+}
+
+SELECT
+  *
+ FROM ${ref("products")}
