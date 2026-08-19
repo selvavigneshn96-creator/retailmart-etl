@@ -1,0 +1,4 @@
+defaultProject: project-68a6a586-6386-4947-a2d
+defaultDataset: dataform
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.52
