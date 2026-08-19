@@ -1,0 +1,7 @@
+
+config {
+  type: "declaration",
+  database: "project-68a6a586-6386-4947-a2d",
+  schema: "raw",
+  name: "orders"
+}
