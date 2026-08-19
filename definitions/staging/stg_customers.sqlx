@@ -1,9 +1,9 @@
 config {
-  type: "table",
-  schema: "staging",
-  name: "stg_customers"
+    type: "table",
+    schema: "staging",
+    name: "stg_customers"
 }
 
 SELECT
   *
-FROM `project-68a6a586-6386-4947-a2d.raw.customers`
+ FROM ${ref("customers")}
