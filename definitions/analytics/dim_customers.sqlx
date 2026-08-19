@@ -1,0 +1,14 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "analytics_customers"
+}
+
+SELECT
+  customer_id,
+  customer_name,
+  email,
+  city,
+  created_date,
+  updated_date
+FROM ${ref("stg_customers")}
