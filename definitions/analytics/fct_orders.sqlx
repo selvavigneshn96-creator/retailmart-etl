@@ -15,7 +15,13 @@ SELECT
   p.category,
   o.quantity,
   o.amount,
-  p.price AS product_price
+  p.price AS product_price,
+ o.quantity * p.price AS calculated_amount,
+ CASE
+  WHEN o.quantity * p.price >= 1000 THEN 'High Value'
+  WHEN o.quantity * p.price >= 500 THEN 'Medium Value'
+  ELSE 'Low Value'
+END AS order_value_category
 FROM ${ref("stg_orders")} AS o
 LEFT JOIN ${ref("stg_customers")} AS c
   ON o.customer_id = c.customer_id
