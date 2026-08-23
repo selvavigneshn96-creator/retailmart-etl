@@ -1,0 +1,20 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "customer_order_summary"
+}
+
+SELECT
+  customer_id,
+  customer_name,
+  city,
+  COUNT(DISTINCT order_id) AS total_orders,
+  SUM(calculated_amount) AS total_spend,
+  AVG(calculated_amount) AS average_order_value,
+  MAX(calculated_amount) AS highest_order_value,
+  MIN(calculated_amount) AS lowest_order_value
+FROM ${ref("fct_orders")}
+GROUP BY
+  customer_id,
+  customer_name,
+  city
