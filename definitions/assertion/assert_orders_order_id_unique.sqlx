@@ -1,0 +1,11 @@
+config {
+  type: "assertion",
+  schema: "assertions"
+}
+
+SELECT
+  order_id,
+  COUNT(*) AS order_count
+FROM ${ref("stg_orders")}
+GROUP BY order_id
+HAVING COUNT(*) > 1
