@@ -1,31 +1,72 @@
-config {
-  type: "incremental",
-  schema: "analytics",
-  name: "fct_orders_incremental"
-}
+MERGE `project-68a6a586-6386-4947-a2d.analytics.fct_orders_incremental` AS target
+USING (
+  SELECT
+    o.order_id,
+    o.order_date,
+    o.updated_date,
+    o.customer_id,
+    c.customer_name,
+    c.city,
+    o.product_id,
+    p.product_name,
+    p.category,
+    o.quantity,
+    o.amount,
+    p.price AS product_price,
+    o.quantity * p.price AS calculated_amount
+  FROM `project-68a6a586-6386-4947-a2d.staging.stg_orders` AS o
+  LEFT JOIN `project-68a6a586-6386-4947-a2d.staging.stg_customers` AS c
+    ON o.customer_id = c.customer_id
+  LEFT JOIN `project-68a6a586-6386-4947-a2d.staging.stg_products` AS p
+    ON o.product_id = p.product_id
+  WHERE o.order_id = 1012
+) AS source
 
-SELECT
-  o.order_id,
-  o.order_date,
-  o.customer_id,
-  c.customer_name,
-  c.city,
-  o.product_id,
-  p.product_name,
-  p.category,
-  o.quantity,
-  o.amount,
-  p.price AS product_price,
-  o.quantity * p.price AS calculated_amount
+ON target.order_id = source.order_id
 
-FROM ${ref("stg_orders")} AS o
+WHEN MATCHED THEN
+  UPDATE SET
+    order_date = source.order_date,
+    updated_date = source.updated_date,
+    customer_id = source.customer_id,
+    customer_name = source.customer_name,
+    city = source.city,
+    product_id = source.product_id,
+    product_name = source.product_name,
+    category = source.category,
+    quantity = source.quantity,
+    amount = source.amount,
+    product_price = source.product_price,
+    calculated_amount = source.calculated_amount
 
-LEFT JOIN ${ref("stg_customers")} AS c
-  ON o.customer_id = c.customer_id
-
-LEFT JOIN ${ref("stg_products")} AS p
-  ON o.product_id = p.product_id
-
-${when(incremental(),
-  `WHERE o.order_date > (SELECT MAX(order_date) FROM ${self()})`
-)}
+WHEN NOT MATCHED THEN
+  INSERT (
+    order_id,
+    order_date,
+    updated_date,
+    customer_id,
+    customer_name,
+    city,
+    product_id,
+    product_name,
+    category,
+    quantity,
+    amount,
+    product_price,
+    calculated_amount
+  )
+  VALUES (
+    source.order_id,
+    source.order_date,
+    source.updated_date,
+    source.customer_id,
+    source.customer_name,
+    source.city,
+    source.product_id,
+    source.product_name,
+    source.category,
+    source.quantity,
+    source.amount,
+    source.product_price,
+    source.calculated_amount
+  );
